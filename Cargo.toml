@@ -1,0 +1,10 @@
+[package]
+name = "serial"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bitflags = { version = "2", default-features = false }
+tom_device = { git = "https://github.com/QIUZHILEI/tom_device.git", features = [
+    "char",
+] }
