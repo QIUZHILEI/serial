@@ -2,15 +2,12 @@ use core::fmt::Write;
 
 use crate::{reg::*, UartConfig};
 
-use tom_device::{
-    read_reg, write_reg, CharDevInfo, CharDevice, Device, DeviceError, DeviceStatus, DeviceType,
-};
+use tom_device::{read_reg, write_reg, CharDevice, Device, DeviceError, DeviceStatus, DeviceType};
 #[derive(Debug)]
 pub struct Uart {
     base_address: usize,
     status: DeviceStatus,
     config: UartConfig,
-    info: Uart8250,
 }
 
 impl Uart {
@@ -19,7 +16,6 @@ impl Uart {
             base_address,
             status: DeviceStatus::Initializing,
             config: UartConfig::uart8250(div),
-            info: Uart8250::new(),
         }
     }
 }
@@ -93,10 +89,6 @@ impl CharDevice for Uart {
         write_reg::<u8>(self.base_address, THR, ch);
         Ok(())
     }
-
-    fn information(&self) -> &dyn tom_device::CharDevInfo {
-        &self.info
-    }
 }
 
 impl Write for Uart {
@@ -109,19 +101,3 @@ impl Write for Uart {
 }
 
 unsafe impl Sync for Uart {}
-
-#[allow(unused)]
-#[derive(Debug)]
-pub struct Uart8250 {
-    name: [char; 8],
-}
-
-impl Uart8250 {
-    const fn new() -> Self {
-        Self {
-            name: ['u', 'a', 'r', 't', '8', '2', '5', '0'],
-        }
-    }
-}
-
-impl CharDevInfo for Uart8250 {}
